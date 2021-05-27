@@ -19,8 +19,8 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    # - name: Allow tests to be generated through Github Action
-    #   run: rm tests/.gitignore
+    - name: Allow tests to be generated through Github Action
+      run:  cat /dev/null > tests/.gitignore
 
     - name: Generate test files
       run: npm run create-all-tests
@@ -31,3 +31,4 @@ jobs:
     - uses: stefanzweifel/git-auto-commit-action@v4
       with:
         commit_message: Generate test and review files automatically
+        file_pattern: tests/**/*.html tests/**/*.json
