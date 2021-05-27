@@ -1,4 +1,8 @@
-/index.html
-/review
-/tests/*/*.html
-/tests/*/*.json
+/index.html         -diff -merge
+/index.html         linguist-generated=true
+/review             -diff -merge
+/review             linguist-generated=true
+/tests/*/*.html     -diff -merge
+/tests/*/*.html     linguist-generated=true
+/tests/*/*.json     -diff -merge
+/tests/*/*.json     linguist-generated=true
