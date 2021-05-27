@@ -20,7 +20,7 @@ jobs:
       run: npm ci
 
     - name: Allow tests generation through action
-      run: rm tests/.gitignore
+      run: ls
 
     - name: Generate test files
       run: npm run create-all-tests
