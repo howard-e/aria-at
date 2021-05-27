@@ -19,7 +19,7 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
-    - name: Allow test generation through action
+    - name: Allow tests generation through action
       run: rm tests/.gitignore
 
     - name: Generate test files
