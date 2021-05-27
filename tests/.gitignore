@@ -1,8 +1,8 @@
-# /*/*.html
-# /*/*.json
+/*/*.html
+/*/*.json
 
-# # Presereve commands.json inside each test's directory folder
-# !/*/commands.json
+# Presereve commands.json inside each test's directory folder
+!/*/commands.json
 
-# # Preserve all the contents of /resources
-# !/resources/*
+# Preserve all the contents of /resources
+!/resources/*
