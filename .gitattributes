@@ -1,7 +1,7 @@
 /index.html         -diff -merge
 /index.html         linguist-generated=true
-/review             -diff -merge
-/review             linguist-generated=true
+/review/*.html      -diff -merge
+/review/*.html      linguist-generated=true
 /tests/*/*.html     -diff -merge
 /tests/*/*.html     linguist-generated=true
 /tests/*/*.json     -diff -merge
