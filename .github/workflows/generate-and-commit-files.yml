@@ -23,7 +23,7 @@ jobs:
       run: rm tests/.gitignore
 
     - name: Generate test files
-      run: rm tests/.gitignore && npm run create-all-tests
+      run: npm run create-all-tests
 
     - name: Generate review files
       run: npm run review-tests
