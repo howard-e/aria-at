@@ -5,13 +5,13 @@
 .DS_*
 
 # Ignore build files
-#/index.html
-#/review
-#/tests/*/*.html
-#/tests/*/*.json
+/index.html
+/review
+/tests/*/*.html
+/tests/*/*.json
 
 # Preserve commands.json inside each /tests/* sub-directory
-!/tests/*/commands.json
+#!/tests/*/commands.json
 
 # Preserve all the contents of /tests/resources
 !/tests/resources/*
