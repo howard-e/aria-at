@@ -11,17 +11,30 @@ const createExampleTests = function (directory) {
   const scriptDirectory = path.dirname(__filename);
   const rootDirectory = scriptDirectory.split('scripts')[0];
   const testDirectory = path.join(rootDirectory, directory);
-  const buildDirectory = path.join(rootDirectory, 'build')
+  const buildDirectory = path.join(rootDirectory, 'build');
+  const testsBuildDirectory = path.join(buildDirectory, 'tests');
+  const testOutputDirectory = path.join(buildDirectory, directory);
 
   const keysFilePath = path.join(rootDirectory, 'tests', 'resources', 'keys.mjs');
 
   const testsFilePath = path.join(testDirectory, 'data', 'tests.csv');
   const atCommandsFilePath = path.join(testDirectory, 'data', 'commands.csv');
   const referencesFilePath = path.join(testDirectory, 'data', 'references.csv');
-  const indexFilePath = path.join(testDirectory, 'index.html');
   const javascriptDirectory = path.join(testDirectory, 'data', 'js');
 
-  fs.existsSync(buildDirectory) || fs.mkdirSync(buildDirectory); // create build directory if it doesn't exist
+  // output file paths
+  const indexFileOutputPath = path.join(testDirectory, 'index.html');
+  const indexBuildFileOutputPath = path.join(testOutputDirectory, 'index.html'); // build folder
+
+  // create build directories if not exists
+  fs.existsSync(buildDirectory) || fs.mkdirSync(buildDirectory);
+  fs.existsSync(testsBuildDirectory) || fs.mkdirSync(testsBuildDirectory);
+  fs.existsSync(testOutputDirectory) || fs.mkdirSync(testOutputDirectory);
+
+  const resourceDirectory = path.join(rootDirectory, 'tests', 'resources');
+  const resourceBuildDirectory = path.join(testsBuildDirectory, 'resources');
+
+  fse.copySync(resourceDirectory, resourceBuildDirectory, {overwrite: true})
 
   const keyDefs = {};
 
@@ -114,6 +127,7 @@ const createExampleTests = function (directory) {
   function createATCommandFile(cmds) {
 
     const fname = path.join(testDirectory, 'commands.json');
+    const fnameBuild = path.join(testOutputDirectory, 'commands.json');
     let data = {};
 
     function addCommand(task, mode, at, key) {
@@ -165,8 +179,8 @@ const createExampleTests = function (directory) {
 
     });
 
-    console.log('write1', fname)
     fs.writeFileSync(fname, beautify(data, null, 2, 40));
+    fs.writeFileSync(fnameBuild, beautify(data, null, 2, 40));
 
     return data;
 
@@ -340,6 +354,8 @@ const createExampleTests = function (directory) {
       .toLowerCase() + '.json';
     let testFileAbsolute = path.join(testDirectory, testFileName);
     let testJSONFileAbsolute = path.join(testDirectory, testJSONFileName);
+    let testFileAbsoluteBuild = path.join(testOutputDirectory, testFileName);
+    let testJSONFileAbsoluteBuild = path.join(testOutputDirectory, testJSONFileName);
 
     if (typeof test.setupScript === 'string') {
       let setupScript = test.setupScript.trim();
@@ -368,8 +384,8 @@ const createExampleTests = function (directory) {
       output_assertions: assertions
     };
 
-    console.log('write2', testJSONFileAbsolute)
     fse.writeFileSync(testJSONFileAbsolute, JSON.stringify(testData, null, 2), 'utf8');
+    fse.writeFileSync(testJSONFileAbsoluteBuild, JSON.stringify(testData, null, 2), 'utf8');
 
     function getTestJson() {
       return JSON.stringify(testData, null, 2);
@@ -404,8 +420,8 @@ ${references}
 </script>
   `;
 
-    console.log('write3', testFileAbsolute)
     fse.writeFileSync(testFileAbsolute, testHTML, 'utf8');
+    fse.writeFileSync(testFileAbsoluteBuild, testHTML, 'utf8');
 
     const applies_to_at = [];
 
@@ -512,8 +528,8 @@ ${rows}
 </body>
 `;
 
-    console.log('write4', indexFilePath)
-    fse.writeFileSync(indexFilePath, indexHTML, 'utf8');
+    fse.writeFileSync(indexFileOutputPath, indexHTML, 'utf8');
+    fse.writeFileSync(indexBuildFileOutputPath, indexHTML, 'utf8');
   }
 
   // Process CSV files

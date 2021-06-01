@@ -6,3 +6,9 @@
 /tests/*/*.html     linguist-generated=true
 /tests/*/*.json     -diff -merge
 /tests/*/*.json     linguist-generated=true
+
+# build folder
+/build/**/*.json    -diff -merge
+/build/**/*.html    linguist-generated=true
+/build/*.json       -diff -merge
+/build/*.html       linguist-generated=true
