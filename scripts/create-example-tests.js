@@ -34,7 +34,11 @@ const createExampleTests = function (directory) {
   const resourceDirectory = path.join(rootDirectory, 'tests', 'resources');
   const resourceBuildDirectory = path.join(testsBuildDirectory, 'resources');
 
+  const supportFile = path.join(rootDirectory, 'tests', 'support.json')
+  const supportBuildFile = path.join(testsBuildDirectory, 'support.json')
+
   fse.copySync(resourceDirectory, resourceBuildDirectory, {overwrite: true})
+  fse.copySync(supportFile, supportBuildFile, {overwrite: true})
 
   const keyDefs = {};
 
