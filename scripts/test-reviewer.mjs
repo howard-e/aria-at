@@ -1,20 +1,32 @@
 import path from 'path';
 import fs from 'fs';
 import fse from 'fs-extra';
-import htmlparser2 from 'htmlparser2';
 import {spawnSync} from 'child_process';
 import np from 'node-html-parser';
 import mustache from 'mustache';
+import minimist from 'minimist';
 import {commandsAPI} from '../tests/resources/at-commands.mjs';
-import * as keys from '../tests/resources/keys.mjs';
 
-const testDir = path.resolve('.', 'tests');
-const templateFile = path.resolve('.', 'scripts', 'review-template.mustache');
-const templateIndexFile = path.resolve('.', 'scripts', 'review-index-template.mustache');
-const reviewDir = path.resolve('.', 'review');
-const reviewBuildDir = path.resolve('build', 'review');
+const args = minimist(process.argv.slice(2), {
+    alias: {
+        b: 'build'
+    },
+});
+
+const BUILD_CHECK = !!args.build;
+
+const testsDirectory = path.resolve('.', 'tests');
+const scriptsDirectory = path.resolve('.', 'scripts');
+const reviewDirectory = path.resolve('.', 'review');
+const reviewBuildDirectory = path.resolve('build', 'review');
+
+const supportFilePath = path.join(testsDirectory, 'support.json');
+const reviewTemplateFilePath = path.resolve(scriptsDirectory, 'review-template.mustache');
+const reviewIndexTemplateFilePath = path.resolve(scriptsDirectory, 'review-index-template.mustache');
+
 const allTestsForPattern = {};
-const support = JSON.parse(fse.readFileSync(path.join(testDir, 'support.json')));
+
+const support = JSON.parse(fse.readFileSync(supportFilePath));
 let allATKeys = [];
 support.ats.forEach(at => {
     allATKeys.push(at.key);
@@ -31,8 +43,8 @@ const getPriorityString = function (priority) {
     return '';
 }
 
-fse.readdirSync(testDir).forEach(function (subDir) {
-    const subDirFullPath = path.join(testDir, subDir);
+fse.readdirSync(testsDirectory).forEach(function (subDir) {
+    const subDirFullPath = path.join(testsDirectory, subDir);
     const stat = fse.statSync(subDirFullPath);
     if (
         stat.isDirectory() &&
@@ -68,7 +80,7 @@ fse.readdirSync(testDir).forEach(function (subDir) {
         fse.readdirSync(subDirFullPath).forEach(function (test) {
             if (path.extname(test) === '.html' && path.basename(test) !== 'index.html') {
 
-                const testFile = path.join(testDir, subDir, test);
+                const testFile = path.join(testsDirectory, subDir, test);
                 const root = np.parse(fse.readFileSync(testFile, 'utf8'), {script: true});
 
                 // Get metadata
@@ -169,17 +181,18 @@ fse.readdirSync(testDir).forEach(function (subDir) {
     }
 });
 
-var template = fse.readFileSync(templateFile, 'utf8');
-fs.existsSync(reviewDir) || fs.mkdirSync(reviewDir);
-fs.existsSync(reviewBuildDir) || fs.mkdirSync(reviewBuildDir);
+let template = fse.readFileSync(reviewTemplateFilePath, 'utf8');
 
-var indexTemplate = fse.readFileSync(templateIndexFile, 'utf8');
+fs.existsSync(reviewDirectory) || fs.mkdirSync(reviewDirectory);
+if (BUILD_CHECK) fs.existsSync(reviewBuildDirectory) || fs.mkdirSync(reviewBuildDirectory);
+
+let indexTemplate = fse.readFileSync(reviewIndexTemplateFilePath, 'utf8');
 
 console.log("\n");
 
 for (let pattern in allTestsForPattern) {
 
-    var rendered = mustache.render(template, {
+    let rendered = mustache.render(template, {
         pattern: pattern,
         totalTests: allTestsForPattern[pattern].length,
         tests: allTestsForPattern[pattern],
@@ -187,10 +200,12 @@ for (let pattern in allTestsForPattern) {
         setupScripts: scripts
     });
 
-    let summaryFile = path.resolve(reviewDir, `${pattern}.html`);
-    let summaryBuildFile = path.resolve(reviewBuildDir, `${pattern}.html`);
+    let summaryFile = path.resolve(reviewDirectory, `${pattern}.html`);
+    let summaryBuildFile = path.resolve(reviewBuildDirectory, `${pattern}.html`);
+
     fse.writeFileSync(summaryFile, rendered);
-    fse.writeFileSync(summaryBuildFile, rendered);
+    if (BUILD_CHECK) fse.writeFileSync(summaryBuildFile, rendered);
+
     console.log(`Summarized ${pattern} tests: ${summaryFile}`);
 }
 
@@ -207,10 +222,13 @@ const renderedIndex = mustache.render(indexTemplate, {
         }
     })
 });
-const indexFile = path.resolve('.', 'index.html');
-const indexBuildFile = path.resolve('build', 'index.html');
-fse.writeFileSync(indexFile, renderedIndex);
-fse.writeFileSync(indexBuildFile, renderedIndex);
-console.log(`Generated: ${indexFile}`);
+
+const indexFileOutputPath = path.resolve('.', 'index.html');
+const indexFileBuildOutputPath = path.resolve('build', 'index.html');
+
+fse.writeFileSync(indexFileOutputPath, renderedIndex);
+if (BUILD_CHECK) fse.writeFileSync(indexFileBuildOutputPath, renderedIndex);
+
+console.log(`Generated: ${indexFileOutputPath}`);
 
 console.log("\n\nDone.");

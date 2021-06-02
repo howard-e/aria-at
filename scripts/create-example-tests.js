@@ -5,44 +5,58 @@ const path = require('path');
 const csv = require('csv-parser');
 const beautify = require('json-beautify');
 
+const args = require('minimist')(process.argv.slice(2), {
+  alias: {
+    b: 'build'
+  },
+});
+
+const BUILD_CHECK = !!args.build;
+
 const createExampleTests = function (directory) {
   const validModes = ['reading', 'interaction', 'item'];
 
-  const scriptDirectory = path.dirname(__filename);
-  const rootDirectory = scriptDirectory.split('scripts')[0];
-  const testDirectory = path.join(rootDirectory, directory);
+  // TODO: provide support for changing of source directories
+  // cwd; @param rootDirectory is dependent on this file not moving from the scripts folder
+  const scriptsDirectory = path.dirname(__filename);
+  const rootDirectory = scriptsDirectory.split('scripts')[0];
+
+  const testsDirectory = path.join(rootDirectory, 'tests');
+  const testPlanDirectory = path.join(rootDirectory, directory);
+
+  const resourcesDirectory = path.join(testsDirectory, 'resources');
+  const keysFilePath = path.join(resourcesDirectory, 'keys.mjs');
+  const supportFilePath = path.join(testsDirectory, 'support.json');
+  const testsFilePath = path.join(testPlanDirectory, 'data', 'tests.csv');
+  const atCommandsFilePath = path.join(testPlanDirectory, 'data', 'commands.csv');
+  const referencesFilePath = path.join(testPlanDirectory, 'data', 'references.csv');
+  const javascriptDirectory = path.join(testPlanDirectory, 'data', 'js');
+
+  // build output folders and file paths setup
   const buildDirectory = path.join(rootDirectory, 'build');
   const testsBuildDirectory = path.join(buildDirectory, 'tests');
-  const testOutputDirectory = path.join(buildDirectory, directory);
+  const testPlanBuildDirectory = path.join(buildDirectory, directory);
 
-  const keysFilePath = path.join(rootDirectory, 'tests', 'resources', 'keys.mjs');
+  const indexFileOutputPath = path.join(testPlanDirectory, 'index.html');
+  const indexFileBuildOutputPath = path.join(testPlanBuildDirectory, 'index.html');
 
-  const testsFilePath = path.join(testDirectory, 'data', 'tests.csv');
-  const atCommandsFilePath = path.join(testDirectory, 'data', 'commands.csv');
-  const referencesFilePath = path.join(testDirectory, 'data', 'references.csv');
-  const javascriptDirectory = path.join(testDirectory, 'data', 'js');
+  const resourcesBuildDirectory = path.join(testsBuildDirectory, 'resources');
+  const supportFileBuildPath = path.join(testsBuildDirectory, 'support.json');
 
-  // output file paths
-  const indexFileOutputPath = path.join(testDirectory, 'index.html');
-  const indexBuildFileOutputPath = path.join(testOutputDirectory, 'index.html'); // build folder
+  if (BUILD_CHECK) {
+    // create build directories if not exists
+    fs.existsSync(buildDirectory) || fs.mkdirSync(buildDirectory);
+    fs.existsSync(testsBuildDirectory) || fs.mkdirSync(testsBuildDirectory);
+    fs.existsSync(testPlanBuildDirectory) || fs.mkdirSync(testPlanBuildDirectory);
 
-  // create build directories if not exists
-  fs.existsSync(buildDirectory) || fs.mkdirSync(buildDirectory);
-  fs.existsSync(testsBuildDirectory) || fs.mkdirSync(testsBuildDirectory);
-  fs.existsSync(testOutputDirectory) || fs.mkdirSync(testOutputDirectory);
-
-  const resourceDirectory = path.join(rootDirectory, 'tests', 'resources');
-  const resourceBuildDirectory = path.join(testsBuildDirectory, 'resources');
-
-  const supportFile = path.join(rootDirectory, 'tests', 'support.json')
-  const supportBuildFile = path.join(testsBuildDirectory, 'support.json')
-
-  fse.copySync(resourceDirectory, resourceBuildDirectory, {overwrite: true})
-  fse.copySync(supportFile, supportBuildFile, {overwrite: true})
+    // need to ensure the build folder has the references it needs
+    fse.copySync(resourcesDirectory, resourcesBuildDirectory, {overwrite: true})
+    fse.copySync(supportFilePath, supportFileBuildPath, {overwrite: true})
+  }
 
   const keyDefs = {};
 
-  const support = JSON.parse(fse.readFileSync(path.join(rootDirectory, 'tests', 'support.json')));
+  const support = JSON.parse(fse.readFileSync(supportFilePath));
   let allATKeys = [];
   let allATNames = [];
   support.ats.forEach(at => {
@@ -53,9 +67,9 @@ const createExampleTests = function (directory) {
   const validAppliesTo = ['Screen Readers', 'Desktop Screen Readers'].concat(allATKeys);
 
   try {
-    fse.statSync(testDirectory);
+    fse.statSync(testPlanDirectory);
   } catch (err) {
-    console.log("The test directory '" + testDirectory + "' does not exist. Check the path to tests.");
+    console.log("The test directory '" + testPlanDirectory + "' does not exist. Check the path to tests.");
     process.exit();
   }
 
@@ -129,9 +143,8 @@ const createExampleTests = function (directory) {
   // Create AT commands file
 
   function createATCommandFile(cmds) {
-
-    const fname = path.join(testDirectory, 'commands.json');
-    const fnameBuild = path.join(testOutputDirectory, 'commands.json');
+    const fname = path.join(testPlanDirectory, 'commands.json');
+    const fnameBuild = path.join(testPlanBuildDirectory, 'commands.json');
     let data = {};
 
     function addCommand(task, mode, at, key) {
@@ -184,7 +197,7 @@ const createExampleTests = function (directory) {
     });
 
     fs.writeFileSync(fname, beautify(data, null, 2, 40));
-    fs.writeFileSync(fnameBuild, beautify(data, null, 2, 40));
+    if (BUILD_CHECK) fs.writeFileSync(fnameBuild, beautify(data, null, 2, 40));
 
     return data;
 
@@ -356,10 +369,11 @@ const createExampleTests = function (directory) {
       .toLowerCase() + '.html';
     let testJSONFileName = 'test-' + id + '-' + cleanTask(test.task).replace(/\s+/g, '-') + '-' + test.mode.trim()
       .toLowerCase() + '.json';
-    let testFileAbsolute = path.join(testDirectory, testFileName);
-    let testJSONFileAbsolute = path.join(testDirectory, testJSONFileName);
-    let testFileAbsoluteBuild = path.join(testOutputDirectory, testFileName);
-    let testJSONFileAbsoluteBuild = path.join(testOutputDirectory, testJSONFileName);
+
+    let testPlanHtmlFilePath = path.join(testPlanDirectory, testFileName);
+    let testPlanJsonFilePath = path.join(testPlanDirectory, testJSONFileName);
+    let testPlanHtmlFileBuildPath = path.join(testPlanBuildDirectory, testFileName);
+    let testPlanJsonFileBuildPath = path.join(testPlanBuildDirectory, testJSONFileName);
 
     if (typeof test.setupScript === 'string') {
       let setupScript = test.setupScript.trim();
@@ -388,8 +402,8 @@ const createExampleTests = function (directory) {
       output_assertions: assertions
     };
 
-    fse.writeFileSync(testJSONFileAbsolute, JSON.stringify(testData, null, 2), 'utf8');
-    fse.writeFileSync(testJSONFileAbsoluteBuild, JSON.stringify(testData, null, 2), 'utf8');
+    fse.writeFileSync(testPlanJsonFilePath, JSON.stringify(testData, null, 2), 'utf8');
+    if (BUILD_CHECK) fse.writeFileSync(testPlanJsonFileBuildPath, JSON.stringify(testData, null, 2), 'utf8');
 
     function getTestJson() {
       return JSON.stringify(testData, null, 2);
@@ -424,8 +438,8 @@ ${references}
 </script>
   `;
 
-    fse.writeFileSync(testFileAbsolute, testHTML, 'utf8');
-    fse.writeFileSync(testFileAbsoluteBuild, testHTML, 'utf8');
+    fse.writeFileSync(testPlanHtmlFilePath, testHTML, 'utf8');
+    if (BUILD_CHECK) fse.writeFileSync(testPlanHtmlFileBuildPath, testHTML, 'utf8');
 
     const applies_to_at = [];
 
@@ -533,7 +547,7 @@ ${rows}
 `;
 
     fse.writeFileSync(indexFileOutputPath, indexHTML, 'utf8');
-    fse.writeFileSync(indexBuildFileOutputPath, indexHTML, 'utf8');
+    if (BUILD_CHECK) fse.writeFileSync(indexFileBuildOutputPath, indexHTML, 'utf8');
   }
 
   // Process CSV files
@@ -580,7 +594,7 @@ ${rows}
               console.log('Test CSV file successfully processed');
 
               console.log('Deleting current test files...')
-              deleteFilesFromDirectory(testDirectory);
+              deleteFilesFromDirectory(testPlanDirectory);
 
               atCommands = createATCommandFile(atCommands);
 
