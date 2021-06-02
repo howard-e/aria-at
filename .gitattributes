@@ -1,14 +1,13 @@
-/index.html         -diff -merge
-/index.html         linguist-generated=true
-/review/*.html      -diff -merge
-/review/*.html      linguist-generated=true
-/tests/*/*.html     -diff -merge
-/tests/*/*.html     linguist-generated=true
-/tests/*/*.json     -diff -merge
-/tests/*/*.json     linguist-generated=true
-
 # build folder
-/build/**/*.json    -diff -merge
-/build/**/*.html    linguist-generated=true
-/build/*.json       -diff -merge
-/build/*.html       linguist-generated=true
+/build/**/*.json        -diff -merge
+/build/**/*.html        linguist-generated=true
+/build/*.json           -diff -merge
+/build/*.html           linguist-generated=true
+/build/index.html       -diff -merge
+/build/index.html       linguist-generated=true
+/build/review/*.html    -diff -merge
+/build/review/*.html    linguist-generated=true
+/build/tests/*/*.html   -diff -merge
+/build/tests/*/*.html   linguist-generated=true
+/build/tests/*/*.json   -diff -merge
+/build/tests/*/*.json   linguist-generated=true

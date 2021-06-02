@@ -1,17 +1,12 @@
 /node_modules
-
 .#*
-
 .DS_*
 
-# Ignore build files
+# Ignore locally generated files files
 /index.html
 /review
 /tests/*/*.html
 /tests/*/*.json
-
-# Preserve commands.json inside each /tests/* sub-directory
-#!/tests/*/commands.json
 
 # Preserve all the contents of /tests/resources
 !/tests/resources/*
