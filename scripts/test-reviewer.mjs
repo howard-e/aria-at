@@ -9,9 +9,23 @@ import {commandsAPI} from '../tests/resources/at-commands.mjs';
 
 const args = minimist(process.argv.slice(2), {
     alias: {
+        h: 'help',
         b: 'build'
     },
 });
+
+if (args.help) {
+    console.log(`Default use:
+  No arguments:
+    Generate tests and view report summary.
+  Arguments:
+    -h, --help
+       Show this message.
+    -b, --build
+       Updates build folder with generated review pages.
+`);
+    process.exit();
+}
 
 const BUILD_CHECK = !!args.build;
 

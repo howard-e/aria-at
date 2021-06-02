@@ -13,9 +13,6 @@ const args = require('minimist')(process.argv.slice(2), {
   },
 });
 
-const BUILD_CHECK = !!args.build;
-const VERBOSE_CHECK = !!args.verbose;
-
 if (args.help) {
   console.log(`Default use:
   No arguments:
@@ -30,6 +27,9 @@ if (args.help) {
 `);
   process.exit();
 }
+
+const BUILD_CHECK = !!args.build;
+const VERBOSE_CHECK = !!args.verbose;
 
 let suppressedMessageCount = 0;
 let successRuns = 0;
@@ -616,7 +616,7 @@ ${rows}
       refs[row.refId] = row.value.trim();
     })
     .on('end', () => {
-      logger(`References CSV file successfully processed: ${referencesFile}`);
+      logger(`References CSV file successfully processed: ${referencesFilePath}`);
 
       fs.createReadStream(atCommandsFilePath)
         .pipe(csv())
@@ -624,7 +624,7 @@ ${rows}
           atCommands.push(row);
         })
         .on('end', () => {
-          logger(`Commands CSV file successfully processed: ${atCommandsFile}`);
+          logger(`Commands CSV file successfully processed: ${atCommandsFilePath}`);
 
           fs.createReadStream(testsFilePath)
             .pipe(csv())
@@ -632,7 +632,7 @@ ${rows}
               tests.push(row);
             })
             .on('end', () => {
-              logger(`Test CSV file successfully processed: ${testsFile}`);
+              logger(`Test CSV file successfully processed: ${testsFilePath}`);
 
               logger('Deleting current test files...')
               deleteFilesFromDirectory(testPlanDirectory);
