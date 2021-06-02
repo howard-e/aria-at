@@ -7,13 +7,54 @@ const beautify = require('json-beautify');
 
 const args = require('minimist')(process.argv.slice(2), {
   alias: {
-    b: 'build'
+    h: 'help',
+    b: 'build',
+    v: 'verbose'
   },
 });
 
 const BUILD_CHECK = !!args.build;
+const VERBOSE_CHECK = !!args.verbose;
 
-const createExampleTests = function (directory) {
+if (args.help) {
+  console.log(`Default use:
+  No arguments:
+    Generate tests and view report summary.
+  Arguments:
+    -h, --help
+       Show this message.
+    -b, --build
+       Updates build folder with generated test files.
+    -v, --verbose
+       Generate tests and view a detailed report summary.
+`);
+  process.exit();
+}
+
+let suppressedMessageCount = 0;
+let successRuns = 0;
+let errorRuns = 0;
+
+/**
+ * @param {string} message - message to be logged
+ * @param {boolean} severe=false - indicates whether the message should be viewed as an error or not
+ * @param {boolean} force=false - indicates whether this message should be forced to be outputted regardless of verbosity level
+ */
+const logger = (message, severe = false, force = false) => {
+  if (VERBOSE_CHECK || force) {
+    if (severe) console.error(message)
+    else console.log(message)
+  } else {
+    // Output no logs
+    suppressedMessageCount += 1; // counter to indicate how many messages were hidden
+  }
+}
+
+/**
+ * @param {string} directory - path to directory of data to be used to generate test
+ * @param {boolean} isLast=false - indicates whether or not this is the last test being generated. used for report summary generation
+ */
+const createExampleTests = function (directory, isLast) {
   const validModes = ['reading', 'interaction', 'item'];
 
   // TODO: provide support for changing of source directories
@@ -69,28 +110,28 @@ const createExampleTests = function (directory) {
   try {
     fse.statSync(testPlanDirectory);
   } catch (err) {
-    console.log("The test directory '" + testPlanDirectory + "' does not exist. Check the path to tests.");
+    logger(`The test directory '${testPlanDirectory}' does not exist. Check the path to tests.`, true, true);
     process.exit();
   }
 
   try {
     fse.statSync(testsFilePath);
   } catch (err) {
-    console.log("The tests.csv file does not exist. Please create '" + testsFilePath + "' file.");
+    logger(`The tests.csv file does not exist. Please create '${testsFilePath}' file.`, true, true);
     process.exit();
   }
 
   try {
     fse.statSync(atCommandsFilePath);
   } catch (err) {
-    console.log("The at-commands.csv file does not exist. Please create '" + atCommandsFilePath + "' file.");
+    logger(`The at-commands.csv file does not exist. Please create '${atCommandsFilePath}' file.`, true, true);
     process.exit();
   }
 
   try {
     fse.statSync(referencesFilePath);
   } catch (err) {
-    console.log("The references.csv file does not exist. Please create '" + referencesFilePath + "' file.");
+    logger(`The references.csv file does not exist. Please create '${referencesFilePath}' file.`, true, true);
     process.exit();
   }
 
@@ -115,7 +156,7 @@ const createExampleTests = function (directory) {
 
     });
   } catch (err) {
-    console.error(err);
+    logger(err, true, true);
   }
 
   // delete test files
@@ -319,7 +360,7 @@ const createExampleTests = function (directory) {
               script += '\t\t\t' + line.trim() + '\n';
           });
         } catch (err) {
-          console.error(err);
+          logger(err, true, true);
         }
 
         scripts.push(`\t\t${scriptName}: function(testPageDocument){\n${script}\t\t}`);
@@ -575,7 +616,7 @@ ${rows}
       refs[row.refId] = row.value.trim();
     })
     .on('end', () => {
-      console.log('References CSV file successfully processed');
+      logger(`References CSV file successfully processed: ${referencesFile}`);
 
       fs.createReadStream(atCommandsFilePath)
         .pipe(csv())
@@ -583,7 +624,7 @@ ${rows}
           atCommands.push(row);
         })
         .on('end', () => {
-          console.log('Commands CSV file successfully processed');
+          logger(`Commands CSV file successfully processed: ${atCommandsFile}`);
 
           fs.createReadStream(testsFilePath)
             .pipe(csv())
@@ -591,14 +632,14 @@ ${rows}
               tests.push(row);
             })
             .on('end', () => {
-              console.log('Test CSV file successfully processed');
+              logger(`Test CSV file successfully processed: ${testsFile}`);
 
-              console.log('Deleting current test files...')
+              logger('Deleting current test files...')
               deleteFilesFromDirectory(testPlanDirectory);
 
               atCommands = createATCommandFile(atCommands);
 
-              console.log('Creating the following test files: ')
+              logger('Creating the following test files: ')
               tests.forEach(function (test) {
                 try {
                   let [url, applies_to_at] = createTestFile(test, refs, atCommands);
@@ -609,23 +650,31 @@ ${rows}
                     script: test.setupScript,
                     applies_to_at: applies_to_at
                   });
-                  console.log('[Test ' + test.testId + ']: ' + url);
+                  logger('[Test ' + test.testId + ']: ' + url);
                 } catch (err) {
-                  console.error(err);
+                  logger(err, true, true);
                 }
               });
 
               createIndexFile(indexOfURLs);
 
               if (errorCount) {
-                console.log('\n\n*** ' + errorCount + ' Errors in tests and/or commands ***');
-                console.log(errors);
+                logger(`*** ${errorCount} Errors in tests and/or commands in file [${testsFilePath}] ***`, true, true);
+                logger(errors, true, true);
+                errorRuns += 1;
               } else {
-                console.log('No validation errors detected');
+                logger('No validation errors detected\n');
+                successRuns += 1;
+              }
+            })
+            .on('finish', () => {
+              if (!VERBOSE_CHECK && isLast) {
+                logger(`(${successRuns}) out of (${successRuns + errorRuns}) Test Plans successfully processed and generated without any validation errors.\n`, false, true)
+                logger(`NOTE: ${suppressedMessageCount} messages suppressed. Run 'npm run create-all-tests -- --help' or 'node ./scripts/create-all-tests.js --help' to learn more.`, false, true)
               }
             });
-        });
-    });
+        })
+    })
 }
 
 exports.createExampleTests = createExampleTests
