@@ -15,8 +15,8 @@ jobs:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           # NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
           deploy_alias: ${{ env.BRANCH_NAME }}
-          build_directory: 'build'
-          build_command: 'npm run build'
+          build_directory: build
+          # build_command: 'npm run build'
 
       - uses: tzkhan/pr-update-action@v2
         with:
