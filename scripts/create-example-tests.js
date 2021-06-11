@@ -34,6 +34,7 @@ const logger = (message, severe = false, force = false) => {
  */
 const createExampleTests = function ({directory, isLast, args = {}}) {
   // setup from arguments passed to npm script
+  const OUTPUT_DIR = args.outputdir || 'build';
   VERBOSE_CHECK = !!args.verbose;
   VALIDATE_CHECK = !!args.validate;
 
@@ -56,7 +57,7 @@ const createExampleTests = function ({directory, isLast, args = {}}) {
   const referenceDirectory = path.join(testPlanDirectory, 'reference')
 
   // build output folders and file paths setup
-  const buildDirectory = path.join(rootDirectory, 'build');
+  const buildDirectory = path.join(rootDirectory, OUTPUT_DIR);
   const testsBuildDirectory = path.join(buildDirectory, 'tests');
   const testPlanBuildDirectory = path.join(buildDirectory, directory);
   const resourcesBuildDirectory = path.join(testsBuildDirectory, 'resources');

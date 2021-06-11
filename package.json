@@ -10,7 +10,8 @@
     "cleanup": "rm -fr ./build",
     "create-all-tests": "node ./scripts/create-all-tests.js",
     "review-tests": "node --experimental-modules ./scripts/test-reviewer.mjs",
-    "update-reference": "node ./scripts/update-reference.js"
+    "update-reference": "node ./scripts/update-reference.js",
+    "serve": "node --experimental-modules ./scripts/live-server.mjs"
   },
   "dependencies": {
     "csv-parser": "^2.3.2",

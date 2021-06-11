@@ -3,6 +3,7 @@
 .DS_*
 
 # Ignore locally generated files files
+/.temp
 /index.html
 /review
 /tests/*/*.html

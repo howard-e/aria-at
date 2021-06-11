@@ -10,6 +10,7 @@ import {commandsAPI as CommandsAPI} from '../tests/resources/at-commands.mjs';
 const args = minimist(process.argv.slice(2), {
     alias: {
         h: 'help',
+        o: 'outputdir',
         t: 'testplan'
     },
 });
@@ -21,16 +22,19 @@ if (args.help) {
   Arguments:
     -h, --help
        Show this message.
+    -o, --outputdir
+       Define output directory generated files will be stored in. Default is 'build'.
     -t, --testplan
        Generate review page for an individual test plan directory. eg. --testplan=checkbox
 `);
     process.exit();
 }
 
+const OUTPUT_DIR = args.outputdir || 'build';
 const TARGET_TEST_PLAN = args.testplan; // individual test plan to generate review page assets for
 
 // folders and file paths setup
-const buildDirectory = path.resolve('.', 'build');
+const buildDirectory = path.resolve('.', OUTPUT_DIR);
 const testsDirectory = path.resolve('.', 'tests');
 const scriptsDirectory = path.resolve('.', 'scripts');
 const testsBuildDirectory = path.resolve(buildDirectory, 'tests');

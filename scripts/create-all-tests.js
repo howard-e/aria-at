@@ -5,6 +5,7 @@ const {createExampleTests} = require('./create-example-tests');
 const args = require('minimist')(process.argv.slice(2), {
   alias: {
     h: 'help',
+    o: 'outputdir',
     t: 'testplan',
     v: 'verbose',
     V: 'validate'
@@ -18,6 +19,8 @@ if (args.help) {
   Arguments:
     -h, --help
        Show this message.
+    -o, --outputdir
+       Define output directory generated files will be stored in. Default is 'build'.
     -t, --testplan
        Generate tests and view a detailed report summary for an individual test plan directory. eg. --testplan=checkbox
     -v, --verbose
