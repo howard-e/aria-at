@@ -30,36 +30,56 @@ Scripts and commands available to help with your workflow.
 
 ### `npm run create-all-tests`
 
-Generate tests' html and json files as determined by using the files in `/tests/<test_plan_module>/`. The generated
-files are written to `/build/tests/<test_plan_module>/`.
+Generate tests' html and json files as determined by using the files in `/tests/<test_plan>/`. The generated files are
+written to `/build/tests/<test_plan>/` by default.
 
-### `npm run create-all-tests -- --verbose`
+#### Options
 
-Generate tests' html and json files as determined by using the files in `/tests/<test_plan_module>/`. The script output
-is more detailed as it describes files being referenced, tests being processed and the absolute paths of the files being
-saved. The generated files are written to `/build/tests/<test_plan_module>/`.
+* `-- --help | -- -h` - To display script usage text.
+
+* `-- --outputdir=<output_directory> | -- -o=<output_directory>` - Specify folder location that the generated files
+  should be written to. Default location is `/build`.
+
+* `-- --testplan=<test_plan> | -- -t=<test_plan>` - Specify test plan that the script must only attempt to generate
+  tests html and json files for.
+
+* `-- --verbose | -- -v` - The script output is more detailed (logs all files that are referenced, tests that are
+  processed, absolute paths, etc).
+
+* `-- --validate | -- -V` - Use to determine whether or not the test plans have any validation errors.
 
 ### `npm run review-tests`
 
 Generate review pages based on the previously generated tests' html and json files. Used to navigate the tests. The
-generated files are written to `/build/index.html` and `/build/tests/review/`.
+generated files are written to `/build/index.html` and `/build/tests/review/` by default.
+
+#### Options
+
+* `-- --help | -- -h` - To display script usage text.
+
+* `-- --outputdir=<output_directory> | -- -o=<output_directory>` - Specify folder location that the generated review
+  pages should be written to. Default location is `/build`.
+
+* `-- --testplan=<test_plan> | -- -t=<test_plan>` - Specify test plan that the script must only attempt to generate
+  review pages for.
 
 ### `npm run build`
 
 Creates or updates the `/build` folder. Runs `npm run create-all-tests` and `npm run review-tests`.
 
-### `npm run build --testplan=<test_plan_module>`
+#### Options
 
-Creates or updates the `/build` folder for a specific test plan. Runs `npm run create-all-tests`
-and `npm run review-tests` for a specific test plan.
+* `--testplan=<test_plan>` - Creates or updates the `/build` folder for a specific test plan.
+  Runs `npm run create-all-tests` and `npm run review-tests` for a specific test plan.
 
 ### `npm run validate`
 
 Run to confirm that the test plans currently drafted within the project have no validation errors.
 
-### `npm run validate --testplan=<test_plan_module>`
+#### Options
 
-Run to confirm that a specific test plan currently drafted within the project has no validation errors.
+* `--testplan=<test_plan>` - Run to confirm that a specific test plan currently drafted within the project has no
+  validation errors.
 
 ### `npm run cleanup`
 
@@ -69,6 +89,20 @@ run `npm run build` to do so manually.**
 ### `npm run update-reference`
 
 It will copy the latest example html from the aria-practices repo into the project.
+
+### `npm run serve`
+
+It will generate a temporary build folder which will be served on [`http://localhost:5000`](http://localhost:5000) by
+default.
+
+#### Options
+
+* `-- --help | -- -h` - To display script usage text.
+
+* `-- --outputdir= | -- -o` - Specify folder location that the temporary generated build files should be written to.
+  Default location is `/.temp`.
+
+* `-- --port=<PORT> | -- -p=<PORT>` - Specify `PORT` the files will be served on. Default is `5000`
 
 ## Viewing review pages
 
