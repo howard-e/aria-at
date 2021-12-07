@@ -39,7 +39,7 @@ const { createExampleScriptsTemplate } = require('../lib/data/example-scripts-te
  */
 const createExampleTests = async ({ directory, args = {} }) => {
   let VERBOSE_CHECK = false;
-  let VALIDATE_CHECK = false;
+  let VALIDATE_CHECK;
 
   let suppressedMessages = 0;
 
