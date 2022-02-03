@@ -1,6 +1,6 @@
 name: Generate and Commit Files
 
-on: pull_request
+on: pull_request_target
 
 jobs:
   generate-and-commit-files:
