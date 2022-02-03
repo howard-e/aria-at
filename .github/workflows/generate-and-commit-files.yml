@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.head_ref }}
+          ref: refs/pull/${{ github.event.pull_request.number }}/head
 
       - name: Use Node.js
         uses: actions/setup-node@v1
