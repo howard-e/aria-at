@@ -83,6 +83,26 @@
 },	setFocusOnTopLink: function(testPageDocument){
 	// sets focus on the 'Top' link
 	testPageDocument.getElementById('top').focus();
+},	setFocusAfterBanner: function(testPageDocument){
+	// sets focus on a link after the banner landmark
+	testPageDocument.getElementById('afterlink').focus();
+},	setFocusAfterBannerAndHideBottomLink: function(testPageDocument){
+	// sets focus on a link after the banner landmark, and hides the last link inside the landmark region
+	testPageDocument.getElementById('bottom').setAttribute('hidden', '');
+	testPageDocument.getElementById('afterlink').focus();
+},	setFocusBeforeBanner: function(testPageDocument){
+	// sets focus on a link before the banner landmark
+	testPageDocument.getElementById('beforelink').focus();
+},	setFocusBeforeBannerAndHideTopLink: function(testPageDocument){
+	// sets focus on a link before the banner landmark, and hides the first link inside the landmark region
+	testPageDocument.getElementById('top').setAttribute('hidden', '');
+	testPageDocument.getElementById('beforelink').focus();
+},	setFocusOnBottomLink: function(testPageDocument){
+	// sets focus on the 'Bottom' link
+	testPageDocument.getElementById('bottom').focus();
+},	setFocusOnTopLink: function(testPageDocument){
+	// sets focus on the 'Top' link
+	testPageDocument.getElementById('top').focus();
 },	setFocusAfterLastBreadcrumbLink: function(testPageDocument){
 	// sets focus on a link after the 'Breadcrumb Example' link
 	testPageDocument.querySelector('#afterlink').focus();
@@ -842,7 +862,7 @@
       <ul class="jaws nvda">
         <li>Mode: reading</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Fri Oct 22 14:54:44 2021 -0500</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/breadcrumb/test-01-navigate-to-first-breadcrumb-link-reading.html?at=jaws">jaws</a></li>
@@ -931,7 +951,7 @@
       <ul class="jaws nvda">
         <li>Mode: reading</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Fri Oct 22 14:54:44 2021 -0500</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/breadcrumb/test-02-navigate-to-last-breadcrumb-link-reading.html?at=jaws">jaws</a></li>
@@ -1023,7 +1043,7 @@
       <ul class="jaws nvda">
         <li>Mode: interaction</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Fri Oct 22 14:54:44 2021 -0500</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/breadcrumb/test-03-navigate-to-first-breadcrumb-link-interaction.html?at=jaws">jaws</a></li>
@@ -1104,7 +1124,7 @@
       <ul class="jaws nvda">
         <li>Mode: interaction</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Fri Oct 22 14:54:44 2021 -0500</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/breadcrumb/test-04-navigate-to-last-breadcrumb-link-interaction.html?at=jaws">jaws</a></li>
@@ -1188,7 +1208,7 @@
       <ul class="voiceover_macos">
         <li>Mode: interaction</li>
         <li>Applies to: voiceover_macos</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Fri Oct 22 14:54:44 2021 -0500</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/breadcrumb/test-05-navigate-to-first-breadcrumb-link-interaction.html?at=voiceover_macos">voiceover_macos</a></li>
@@ -1240,7 +1260,7 @@
       <ul class="voiceover_macos">
         <li>Mode: interaction</li>
         <li>Applies to: voiceover_macos</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Fri Oct 22 14:54:44 2021 -0500</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/breadcrumb/test-06-navigate-to-last-breadcrumb-link-interaction.html?at=voiceover_macos">voiceover_macos</a></li>
@@ -1294,7 +1314,7 @@
       <ul class="jaws nvda">
         <li>Mode: reading</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Fri Oct 15 16:23:29 2021 -0500</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/breadcrumb/test-07-read-information-about-breadcrumb-link-reading.html?at=jaws">jaws</a></li>
@@ -1372,7 +1392,7 @@
       <ul class="jaws nvda">
         <li>Mode: interaction</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Fri Oct 15 16:23:29 2021 -0500</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/breadcrumb/test-08-read-information-about-breadcrumb-link-interaction.html?at=jaws">jaws</a></li>
@@ -1450,7 +1470,7 @@
       <ul class="voiceover_macos">
         <li>Mode: interaction</li>
         <li>Applies to: voiceover_macos</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Fri Oct 15 16:23:29 2021 -0500</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/breadcrumb/test-09-read-information-about-breadcrumb-link-interaction.html?at=voiceover_macos">voiceover_macos</a></li>
