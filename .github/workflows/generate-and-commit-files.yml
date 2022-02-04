@@ -12,8 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
+          fetch-depth: 0
           ref: refs/pull/${{ github.event.pull_request.number }}/head
           # ref: ${{github.event.pull_request.head.ref}}
+          # ref: ${{ github.head_ref }}
 
       - name: Use Node.js
         uses: actions/setup-node@v1
@@ -36,7 +38,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          ref: refs/pull/${{ github.event.pull_request.number }}/head
+          # ref: ${{github.event.pull_request.head.ref}}
+          # ref: ${{ github.head_ref }}
 
       - name: Use Node.js
         uses: actions/setup-node@v1
