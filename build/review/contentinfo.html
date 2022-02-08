@@ -21,6 +21,34 @@
     <script type="module">
       import {TestWindow} from '../tests/resources/aria-at-test-window.mjs';
 
+      function numberTests(value) {
+        let testNumber = 1;
+        let titleTextChanged = false;
+        let buttonTextChanged = false;
+
+        for (let result of document.querySelectorAll(`.${value}`)) {
+          result.style.display = 'block';
+
+          if (titleTextChanged && buttonTextChanged) {
+            testNumber += 1;
+
+            titleTextChanged = false;
+            buttonTextChanged = false;
+          }
+
+          if (result.nodeName === 'H2') {
+            result.innerText = result.innerText.replace(/^Test\s\d+:/g, `Test ${testNumber}:`);
+            titleTextChanged = true;
+          }
+
+          if (result.nodeName === 'BUTTON') {
+            result.value = `Open Test ${testNumber} Page`;
+            result.innerText = `Open Test ${testNumber} Page`;
+            buttonTextChanged = true;
+          }
+        }
+      }
+
       window.filterATs = function(button) {
         const val = button.value;
 
@@ -36,6 +64,7 @@
               at.checked = true;
             }
           }
+          numberTests(val);
         }
         else {
           for (let at of document.querySelectorAll('input')) {
@@ -50,12 +79,8 @@
             for (let result of document.querySelectorAll(`.${at.value}`)) {
               result.style.display = 'none';
             }
-
           }
-
-          for (let result of document.querySelectorAll(`.${val}`)) {
-            result.style.display = 'block';
-          }
+          numberTests(val);
         }
       };
 
@@ -832,9 +857,9 @@
     <fieldset>
       <legend>Filter tests by assistive technology</legend>
       <input type="radio" onclick="filterATs(this)" id="all" value="all" checked="true"><label for="all">All assistive technologies</label>
-        <input type="radio" onclick="filterATs(this)" id="jaws" value="jaws"><label for="jaws">JAWS</label>
-        <input type="radio" onclick="filterATs(this)" id="nvda" value="nvda"><label for="nvda">NVDA</label>
-        <input type="radio" onclick="filterATs(this)" id="voiceover_macos" value="voiceover_macos"><label for="voiceover_macos">VoiceOver for macOS</label>
+      <input type="radio" onclick="filterATs(this)" id="jaws" value="jaws"><label for="jaws">JAWS</label>
+      <input type="radio" onclick="filterATs(this)" id="nvda" value="nvda"><label for="nvda">NVDA</label>
+      <input type="radio" onclick="filterATs(this)" id="voiceover_macos" value="voiceover_macos"><label for="voiceover_macos">VoiceOver for macOS</label>
     </fieldset>
 
     <h2 class="jaws nvda">Test 1: Navigate forwards into a contentinfo landmark in reading mode</h2>
@@ -842,7 +867,7 @@
       <ul class="jaws nvda">
         <li>Mode: reading</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-01-navigate-forwards-into-a-contentinfo-landmark-reading.html?at=jaws">jaws</a></li>
@@ -924,7 +949,7 @@
       <ul class="jaws nvda">
         <li>Mode: interaction</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-02-navigate-forwards-into-a-contentinfo-landmark-interaction.html?at=jaws">jaws</a></li>
@@ -999,7 +1024,7 @@
       <ul class="voiceover_macos">
         <li>Mode: interaction</li>
         <li>Applies to: voiceover_macos</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-03-navigate-forwards-into-a-contentinfo-landmark-interaction.html?at=voiceover_macos">voiceover_macos</a></li>
@@ -1048,7 +1073,7 @@
       <ul class="jaws nvda">
         <li>Mode: reading</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-04-navigate-backwards-into-a-contentinfo-landmark-reading.html?at=jaws">jaws</a></li>
@@ -1128,7 +1153,7 @@
       <ul class="jaws nvda">
         <li>Mode: interaction</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-05-navigate-backwards-into-a-contentinfo-landmark-interaction.html?at=jaws">jaws</a></li>
@@ -1203,7 +1228,7 @@
       <ul class="voiceover_macos">
         <li>Mode: interaction</li>
         <li>Applies to: voiceover_macos</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-06-navigate-backwards-into-a-contentinfo-landmark-interaction.html?at=voiceover_macos">voiceover_macos</a></li>
@@ -1252,7 +1277,7 @@
       <ul class="jaws nvda">
         <li>Mode: reading</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-07-navigate-forwards-out-of-a-contentinfo-landmark-reading.html?at=jaws">jaws</a></li>
@@ -1332,7 +1357,7 @@
       <ul class="jaws nvda">
         <li>Mode: interaction</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-08-navigate-forwards-out-of-a-contentinfo-landmark-interaction.html?at=jaws">jaws</a></li>
@@ -1407,7 +1432,7 @@
       <ul class="voiceover_macos">
         <li>Mode: interaction</li>
         <li>Applies to: voiceover_macos</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-09-navigate-forwards-out-of-a-contentinfo-landmark-interaction.html?at=voiceover_macos">voiceover_macos</a></li>
@@ -1456,7 +1481,7 @@
       <ul class="jaws nvda">
         <li>Mode: reading</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-10-navigate-backwards-out-of-a-contentinfo-landmark-reading.html?at=jaws">jaws</a></li>
@@ -1536,7 +1561,7 @@
       <ul class="jaws nvda">
         <li>Mode: interaction</li>
         <li>Applies to: jaws, nvda</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-11-navigate-backwards-out-of-a-contentinfo-landmark-interaction.html?at=jaws">jaws</a></li>
@@ -1611,7 +1636,7 @@
       <ul class="voiceover_macos">
         <li>Mode: interaction</li>
         <li>Applies to: voiceover_macos</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-12-navigate-backwards-out-of-a-contentinfo-landmark-interaction.html?at=voiceover_macos">voiceover_macos</a></li>
@@ -1660,7 +1685,7 @@
       <ul class="jaws">
         <li>Mode: reading</li>
         <li>Applies to: jaws</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-13-navigate-forwards-to-a-paragraph-inside-a-contentinfo-landmark-reading.html?at=jaws">jaws</a></li>
@@ -1707,7 +1732,7 @@
       <ul class="voiceover_macos">
         <li>Mode: interaction</li>
         <li>Applies to: voiceover_macos</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-14-navigate-forwards-to-a-paragraph-inside-a-contentinfo-landmark-interaction.html?at=voiceover_macos">voiceover_macos</a></li>
@@ -1754,7 +1779,7 @@
       <ul class="jaws">
         <li>Mode: reading</li>
         <li>Applies to: jaws</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-15-navigate-backwards-to-a-paragraph-inside-a-contentinfo-landmark-reading.html?at=jaws">jaws</a></li>
@@ -1801,7 +1826,7 @@
       <ul class="voiceover_macos">
         <li>Mode: interaction</li>
         <li>Applies to: voiceover_macos</li>
-        <li>Last edited: Thu Jan 6 14:45:52 2022 -0600</li>
+        <li>Last edited: Wed Jan 5 17:03:13 2022 -0600</li>
         <li>Tests:
           <ul>
               <li><a href="../tests/contentinfo/test-16-navigate-backwards-to-a-paragraph-inside-a-contentinfo-landmark-interaction.html?at=voiceover_macos">voiceover_macos</a></li>
