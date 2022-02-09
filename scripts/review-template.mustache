@@ -22,11 +22,11 @@
       import {TestWindow} from '../tests/resources/aria-at-test-window.mjs';
 
       function numberTests(value) {
-        let testNumber = 1;
+        let testNumber = 0;
         let titleTextChanged = false;
         let buttonTextChanged = false;
 
-        for (let result of document.querySelectorAll(`.${value}`)) {
+        for (let result of document.querySelectorAll(value)) {
           result.style.display = 'block';
 
           if (titleTextChanged && buttonTextChanged) {
@@ -37,16 +37,19 @@
           }
 
           if (result.nodeName === 'H2') {
-            result.innerText = result.innerText.replace(/^Test\s\d+:/g, `Test ${testNumber}:`);
+            result.innerText = result.innerText.replace(/^Test\s\d+:/g, `Test ${testNumber + 1}:`);
             titleTextChanged = true;
           }
 
           if (result.nodeName === 'BUTTON') {
-            result.value = `Open Test ${testNumber} Page`;
-            result.innerText = `Open Test ${testNumber} Page`;
+            result.value = `Open Test ${testNumber + 1} Page`;
+            result.innerText = `Open Test ${testNumber + 1} Page`;
             buttonTextChanged = true;
           }
         }
+
+        let reviewPageTitle = document.querySelector('h1');
+        reviewPageTitle.innerText = reviewPageTitle.innerText.replace(/\(\d+\stest(s|)\)/g, `(${testNumber} test${testNumber !== 1 ? 's': ''})`);
       }
 
       window.filterATs = function(button) {
@@ -64,7 +67,7 @@
               at.checked = true;
             }
           }
-          numberTests(val);
+          numberTests('.nvda, .jaws, .voiceover_macos');
         }
         else {
           for (let at of document.querySelectorAll('input')) {
@@ -80,7 +83,7 @@
               result.style.display = 'none';
             }
           }
-          numberTests(val);
+          numberTests(`.${val}`);
         }
       };
 
