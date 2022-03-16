@@ -584,12 +584,14 @@ ${rows}
     });
   }
 
-  function generateSourceHtmlScriptFile(path, content) {
+  function generateSourceHtmlScriptFile(filePath, content) {
     // check that test plan's reference html file path is generated file
-    if (path.includes('reference') && (path.split(path.sep).pop().match(/\./g) || []).length > 1) {
+    if (
+      filePath.includes('reference') &&
+      (filePath.split(path.sep).pop().match(/\./g) || []).length > 1
+    ) {
       // generate file at `<root>/tests/<directory>/reference/<path>/<directory>.<script>.html
-
-      const sourceFilePath = path.replace(`build${path.sep}`, '');
+      const sourceFilePath = filePath.replace(`build${path.sep}`, '');
       emitFile(sourceFilePath, content);
       checkedSourceHtmlScriptFiles.push(sourceFilePath);
     }
@@ -736,7 +738,6 @@ ${rows}
       .slice(0, -1)
       .join(path.sep);
     fs.readdirSync(sourceFolder).forEach(function (file) {
-      console.log('huh', sourceFolder);
       const filePath = path.join(sourceFolder, file);
       // check that test plan's reference html file path is generated file
       if (file.includes('.html') && (file.split(path.sep).pop().match(/\./g) || []).length > 1) {
