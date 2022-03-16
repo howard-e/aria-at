@@ -109,7 +109,7 @@ stacktrace: ${error.stack}
     );
   } else {
     console.log(
-      `(${successRunsCount}) out of (${totalRunsCount}) test plan(s) successfully processed and generated without any validation errors.\n`
+      `(${successRunsCount}) out of (${totalRunsCount}) test plan(s) successfully processed and generated without any validation errors.\n `
     );
   }
 
