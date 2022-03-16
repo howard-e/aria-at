@@ -565,6 +565,7 @@ ${rows}
   var errorCount = 0;
   var errors = '';
   var indexOfURLs = [];
+  var checkedSourceHtmlScriptFiles = [];
 
   function addTestError(id, error) {
     errorCount += 1;
@@ -581,6 +582,14 @@ ${rows}
     newTestPlan.add(path.relative(testPlanBuildDirectory, filepath), {
       buffer: toBuffer(content),
     });
+  }
+
+  function generateSourceHtmlScript(path, content) {
+    // check that test plan's reference html file path is generated file
+    if (path.includes('reference') && (path.split('/').pop().match(/\./g) || []).length > 1) {
+      emitFile(path.replace('build/', ''), content);
+      checkedSourceHtmlScriptFiles.push(path.replace('build/', ''));
+    }
   }
 
   function validateCSVKeys(result) {
@@ -713,7 +722,24 @@ ${rows}
       createCollectedTestHtmlFile(collectedTest, testPlanBuildDirectory)
     ),
   ];
-  files.forEach(file => emitFile(file.path, file.content));
+  files.forEach(file => {
+    generateSourceHtmlScript(file.path, file.content);
+    return emitFile(file.path, file.content);
+  });
+
+  if (checkedSourceHtmlScriptFiles.length) {
+    const sourceFolder = checkedSourceHtmlScriptFiles[0].split('/').slice(0, -1).join('/');
+    fs.readdirSync(sourceFolder).forEach(function (file) {
+      const filePath = path.join(sourceFolder, file);
+      // check that test plan's reference html file path is generated file
+      if (file.includes('.html') && (file.split('/').pop().match(/\./g) || []).length > 1) {
+        // remove generated html files from source which include scripts which are no longer generated
+        if (!checkedSourceHtmlScriptFiles.includes(filePath)) {
+          fs.rmSync(path.join(sourceFolder, file));
+        }
+      }
+    });
+  }
 
   const atCommandsMap = createCommandTuplesATModeTaskLookup(commandsValidated);
   emitFile(
