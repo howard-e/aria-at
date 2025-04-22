@@ -27,7 +27,7 @@ jobs:
         if: steps.check-changes.outputs.changes_detected == 'true'
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.WORKFLOW_TOKEN }}
           repository: howard-e/aria-at-app
           event-type: update-test-snapshots
           client-payload: |
